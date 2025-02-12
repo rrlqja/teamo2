@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import song.teamo2.domain.team.dto.CreateTeamDto;
+import song.teamo2.domain.team.dto.CreateTeamingDto;
 import song.teamo2.domain.team.dto.ModifyTeamDto;
 import song.teamo2.domain.team.dto.TeamDto;
 import song.teamo2.domain.team.entity.Team;
@@ -102,5 +103,26 @@ public class TeamController {
         redirectAttributes.addAttribute("teamId", modifiedTeamId);
 
         return "redirect:/team/{teamId}";
+    }
+
+    @GetMapping("/teaming/{teamId}")
+    public String getTeaming(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                             @PathVariable("teamId") Long teamId,
+                             @ModelAttribute("teaming") CreateTeamingDto createTeamingDto) {
+        teamService.getCreateTeaming(userDetails.getUser(), teamId);
+
+        return "team/createTeaming";
+    }
+
+    @PostMapping("/teaming/{teamId}")
+    public String postTeaming(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                              @PathVariable("teamId") Long teamId,
+                              CreateTeamingDto createTeamingDto,
+                              RedirectAttributes redirectAttributes) {
+        Long teamingId = teamService.createTeaming(userDetails.getUser(), teamId, createTeamingDto);
+
+        redirectAttributes.addAttribute("teamingId", teamingId);
+
+        return "redirect:/teaming/{teamingId}";
     }
 }

@@ -8,13 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import song.teamo2.domain.common.exception.team.exceptions.TeamModificationAccessDeniedException;
 import song.teamo2.domain.common.exception.team.exceptions.TeamNotFoundException;
+import song.teamo2.domain.common.exception.team.exceptions.TeamingCreationAccessDeniedException;
 import song.teamo2.domain.team.dto.CreateTeamDto;
+import song.teamo2.domain.team.dto.CreateTeamingDto;
 import song.teamo2.domain.team.dto.ModifyTeamDto;
 import song.teamo2.domain.team.dto.TeamDto;
 import song.teamo2.domain.team.entity.Team;
 import song.teamo2.domain.team.entity.TeamMember;
 import song.teamo2.domain.team.entity.TeamRole;
 import song.teamo2.domain.team.repository.TeamJpaRepository;
+import song.teamo2.domain.teaming.entity.Teaming;
+import song.teamo2.domain.teaming.repository.TeamingJpaRepository;
 import song.teamo2.domain.user.entity.User;
 
 import java.util.List;
@@ -25,6 +29,7 @@ import java.util.List;
 public class TeamService {
     private final TeamMemberService teamMemberService;
     private final TeamJpaRepository teamRepository;
+    private final TeamingJpaRepository teamingRepository;
 
     @Transactional
     public Long createTeam(User user, CreateTeamDto createTeamDto) {
@@ -97,6 +102,29 @@ public class TeamService {
         team.modify(modifyTeamDto.getTeamName(), modifyTeamDto.getTeamInfo());
 
         return teamRepository.save(team).getId();
+    }
+
+    @Transactional
+    public void getCreateTeaming(User user, Long teamId) {
+        Team team = findTeamById(teamId);
+
+        TeamMember teamMember = teamMemberService.isTeamMember(user, team);
+        if (teamMember == null || teamMember.getRole() != TeamRole.ADMIN) {
+            throw new TeamingCreationAccessDeniedException("티밍을 생성할 수 없습니다.");
+        }
+    }
+
+    @Transactional
+    public Long createTeaming(User user, Long teamId, CreateTeamingDto createTeamingDto) {
+        Team team = findTeamById(teamId);
+
+        TeamMember teamMember = teamMemberService.isTeamMember(user, team);
+        if (teamMember == null || teamMember.getRole() != TeamRole.ADMIN) {
+            throw new TeamingCreationAccessDeniedException("티밍을 생성할 수 없습니다.");
+        }
+
+        Teaming teaming = Teaming.create(user, team, createTeamingDto.getTitle(), createTeamingDto.getContent());
+        return teamingRepository.save(teaming).getId();
     }
 
     private Team findTeamById(Long teamId) {
