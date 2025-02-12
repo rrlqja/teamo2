@@ -1,4 +1,4 @@
-package song.teamo2.domain.user.controller.common.controller;
+package song.teamo2.domain.common.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
