@@ -6,9 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import song.teamo2.domain.application.service.ApplicationService;
+import song.teamo2.domain.common.exception.teamMember.exceptions.AlreadyExistTeamMemberException;
 import song.teamo2.domain.common.exception.teaming.exceptions.TeamingModificationAccessDeniedException;
 import song.teamo2.domain.common.exception.teaming.exceptions.TeamingNotFoundException;
+import song.teamo2.domain.team.entity.TeamMember;
 import song.teamo2.domain.team.service.TeamMemberService;
+import song.teamo2.domain.teaming.dto.ApplicationForm;
 import song.teamo2.domain.teaming.dto.ModifyTeamingDto;
 import song.teamo2.domain.teaming.dto.TeamingDto;
 import song.teamo2.domain.teaming.dto.TeamingPageDto;
@@ -22,6 +26,7 @@ import song.teamo2.domain.user.entity.User;
 public class TeamingService {
     private final TeamMemberService teamMemberService;
     private final TeamingJpaRepository teamingRepository;
+    private final ApplicationService applicationService;
 
     @Transactional
     public Page<TeamingPageDto> getTeamingList(Pageable pageable) {
@@ -34,10 +39,15 @@ public class TeamingService {
         Teaming teaming = findTeamingById(teamingId);
 
         if (user == null) {
-            return new TeamingDto(teaming, false);
+            return new TeamingDto(teaming, false, false);
         }
 
-        return new TeamingDto(teaming, teaming.getWriter().getId() == user.getId());
+        TeamMember teamMember = teamMemberService.isTeamMember(user, teaming.getTeam());
+        if (teamMember != null) {
+            return new TeamingDto(teaming, teaming.getWriter().getId() == user.getId(), true);
+        }
+
+        return new TeamingDto(teaming, teaming.getWriter().getId() == user.getId(), false);
     }
 
     @Transactional
@@ -69,6 +79,27 @@ public class TeamingService {
         teaming.toggleStatus();
 
         return teamingRepository.save(teaming).getId();
+    }
+
+    @Transactional
+    public void validateApplicationForm(User user, Long teamingId) {
+        Teaming teaming = findTeamingById(teamingId);
+
+        applicationService.validateExistApplication(user, teaming.getTeam());
+    }
+
+    @Transactional
+    public Long createApplication(User user, Long teamingId, ApplicationForm applicationForm) {
+        Teaming teaming = findTeamingById(teamingId);
+
+        TeamMember teamMember = teamMemberService.isTeamMember(user, teaming.getTeam());
+        if (teamMember != null) {
+            throw new AlreadyExistTeamMemberException("이미 가입한 팀 입니다.");
+        }
+
+        applicationService.validateExistApplication(user, teaming.getTeam());
+
+        return applicationService.createApplication(user, teaming.getTeam(), applicationForm);
     }
 
     private Teaming findTeamingById(Long teamingId) {

@@ -20,8 +20,9 @@ public class TeamingDto {
     private String teamName;
     private String teamInfo;
     private boolean isWriter;
+    private boolean isMember;
 
-    public TeamingDto(Teaming teaming, boolean isWriter) {
+    public TeamingDto(Teaming teaming, boolean isWriter, boolean isMember) {
         this.id = teaming.getId();
         this.title = teaming.getTitle();
         this.content = teaming.getContent();
@@ -30,5 +31,6 @@ public class TeamingDto {
         this.teamName = teaming.getTeam().getTeamName();
         this.teamInfo = teaming.getTeam().getTeamInfo();
         this.isWriter = isWriter;
+        this.isMember = isMember;
     }
 }

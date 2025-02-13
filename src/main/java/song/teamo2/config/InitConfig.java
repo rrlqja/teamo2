@@ -10,6 +10,8 @@ import song.teamo2.domain.team.entity.TeamMember;
 import song.teamo2.domain.team.entity.TeamRole;
 import song.teamo2.domain.team.repository.TeamJpaRepository;
 import song.teamo2.domain.team.repository.TeamMemberJpaRepository;
+import song.teamo2.domain.teaming.entity.Teaming;
+import song.teamo2.domain.teaming.repository.TeamingJpaRepository;
 import song.teamo2.domain.user.entity.User;
 import song.teamo2.domain.user.repository.UserJpaRepository;
 
@@ -31,11 +33,18 @@ public class InitConfig {
         private final UserJpaRepository userRepository;
         private final TeamJpaRepository teamRepository;
         private final TeamMemberJpaRepository teamMemberRepository;
+        private final TeamingJpaRepository teamingRepository;
 
         public void init() {
             User user1 = userRepository.save(createUser("1", "1"));
+            User user2 = userRepository.save(createUser("2", "2"));
             Team team1 = teamRepository.save(createTeam("t1", "t info1"));
-            TeamMember teamMEmber1 = teamMemberRepository.save(createTeamMember(user1, team1, TeamRole.ADMIN));
+            TeamMember teamMember1 = teamMemberRepository.save(createTeamMember(user1, team1, TeamRole.ADMIN));
+            Teaming teaming1 = teamingRepository.save(createTeaming(user1, team1, "teaming1", "teaming1 content"));
+        }
+
+        private static Teaming createTeaming(User user1, Team team1, String title, String content) {
+            return Teaming.create(user1, team1, title, content);
         }
 
         private static TeamMember createTeamMember(User user, Team team, TeamRole teamRole) {
