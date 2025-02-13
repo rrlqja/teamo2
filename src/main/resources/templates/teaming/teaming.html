@@ -1,0 +1,28 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Teaming</title>
+</head>
+<body>
+<div th:object="${teaming}">
+    <p th:text="*{title}">title</p>
+    <div>
+        <p th:text="*{teamName}">teamName</p>
+        <p th:text="*{teamInfo}">teamInfo</p>
+    </div>
+    <p th:text="*{content}">content</p>
+    <p th:text="*{status}">status</p>
+    <button th:if="*{isWriter()}" th:onclick="|location.href='@{/teaming/modify/{teamingId}(teamingId=*{id})}'|">수정</button>
+    <button th:if="*{isWriter()}" th:onclick="|location.href='@{/teaming/delete/{teamingId}(teamingId=*{id})}'|">삭제</button>
+    <button th:if="*{isWriter()}"
+            th:onclick="|location.href='@{/teaming/toggleStatus/{teamingId}(teamingId=*{id})}'|">
+        <span th:text="*{status} == 'RECRUITING' ? '모집 종료' : '모집 중'"></span>
+    </button>
+</div>
+
+<script>
+</script>
+</body>
+</html>

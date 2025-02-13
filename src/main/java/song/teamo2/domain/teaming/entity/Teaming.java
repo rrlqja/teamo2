@@ -1,6 +1,8 @@
 package song.teamo2.domain.teaming.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +31,9 @@ public class Teaming extends PostEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User writer;
 
+    @Enumerated(EnumType.STRING)
+    private TeamingStatus status;
+
     public static Teaming create(User writer, Team team, String title, String content) {
         return new Teaming(writer, team, title, content);
     }
@@ -37,5 +42,19 @@ public class Teaming extends PostEntity {
         super(title, content);
         this.team = team;
         this.writer = writer;
+        this.status = TeamingStatus.RECRUITING;
+    }
+
+    public void modify(String title, String content) {
+        setTitle(title);
+        setContent(content);
+    }
+
+    public void toggleStatus() {
+        if (this.status == TeamingStatus.RECRUITING) {
+            this.status = TeamingStatus.CLOSED;
+        } else {
+            this.status = TeamingStatus.RECRUITING;
+        }
     }
 }

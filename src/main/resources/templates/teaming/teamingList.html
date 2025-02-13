@@ -1,0 +1,18 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Teaming</title>
+</head>
+<body>
+<div th:each="teaming : ${teamingPage}" th:onclick="|location.href='@{/teaming/{teamingId}(teamingId=*{teaming.teamingId})}'|" style="border: 1px solid black; margin: 10px;">
+    <p th:text="${teaming.title}">title</p>
+    <p th:text="${teaming.writerName}">writer</p>
+</div>
+
+<script>
+
+</script>
+</body>
+</html>
