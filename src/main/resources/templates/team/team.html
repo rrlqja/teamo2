@@ -12,6 +12,8 @@
     <button th:if="*{isMember()}" th:onclick="'exitTeam(' + *{id} +')'">탈퇴</button>
     <button th:if="*{isAdmin()}" th:onclick="|location.href='@{/team/modify/{teamId}(teamId=*{id})}'|">수정</button>
     <button th:if="*{isAdmin()}" th:onclick="|location.href='@{/team/teaming/{teamId}(teamId=*{id})}'|">티밍 생성</button>
+    <button th:if="*{isAdmin()}" th:onclick="|location.href='@{/team/applicationList/{teamId}(teamId=*{id})}'|">가입 신청서 확인</button>
+    <button th:if="*{isAdmin()}" th:onclick="|location.href='@{/team/{teamId}/teamMemberList(teamId=*{id})}'|">멤버 관리</button>
 </div>
 
 <script>

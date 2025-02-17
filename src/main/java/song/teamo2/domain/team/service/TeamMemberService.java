@@ -15,6 +15,8 @@ import song.teamo2.domain.team.repository.TeamJpaRepository;
 import song.teamo2.domain.team.repository.TeamMemberJpaRepository;
 import song.teamo2.domain.user.entity.User;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,8 +37,13 @@ public class TeamMemberService {
     }
 
     @Transactional
-    public Page<TeamMember> getTeamMemberPage(User user, Pageable pageable) {
+    public Page<TeamMember> getTeamMemberPageByUser(User user, Pageable pageable) {
         return teamMemberRepository.findTeamMembersByUser(user, pageable);
+    }
+
+    @Transactional
+    public Page<TeamMember> getTeamMemberPageByTeam(Team team, Pageable pageable) {
+        return teamMemberRepository.findTeamMemberByTeam(team, pageable);
     }
 
     @Transactional
@@ -56,5 +63,15 @@ public class TeamMemberService {
         }
 
         teamMemberRepository.delete(teamMember);
+    }
+
+    @Transactional
+    public void removeTeamMemberByTeamAndUserId(Team team, Long teamMemberUserId) {
+        Optional<TeamMember> optionalTeamMember = teamMemberRepository.findTeamMemberByTeamAndUser_Id(team, teamMemberUserId);
+
+        if (optionalTeamMember.isPresent()) {
+            TeamMember teamMember = optionalTeamMember.get();
+            teamMemberRepository.delete(teamMember);
+        }
     }
 }

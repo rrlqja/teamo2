@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import song.teamo2.domain.application.dto.ApplicationPageDto;
 import song.teamo2.domain.team.dto.CreateTeamDto;
 import song.teamo2.domain.team.dto.CreateTeamingDto;
 import song.teamo2.domain.team.dto.ModifyTeamDto;
 import song.teamo2.domain.team.dto.TeamDto;
+import song.teamo2.domain.team.dto.TeamMemberPageDto;
 import song.teamo2.domain.team.entity.Team;
 import song.teamo2.domain.team.service.TeamService;
 import song.teamo2.security.authentication.userdetails.UserDetailsImpl;
@@ -124,5 +126,41 @@ public class TeamController {
         redirectAttributes.addAttribute("teamingId", teamingId);
 
         return "redirect:/teaming/{teamingId}";
+    }
+
+    @GetMapping("/applicationList/{teamId}")
+    public String getApplicationPage(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                     @PathVariable("teamId") Long teamId,
+                                     @PageableDefault(size = 10, page = 0) Pageable pageable,
+                                     Model model) {
+        Page<ApplicationPageDto> applicationPage = teamService.getApplicationPage(userDetails.getUser(), teamId, pageable);
+
+        model.addAttribute("applicationPage", applicationPage);
+
+        return "team/applicationList";
+    }
+
+    @GetMapping("/{teamId}/teamMemberList")
+    public String getTeamMemberList(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                    @PathVariable("teamId") Long teamId,
+                                    Model model,
+                                    @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        Page<TeamMemberPageDto> teamMemberPage = teamService.getTeamMemberPage(userDetails.getUser(), teamId, pageable);
+
+        model.addAttribute("teamMemberPage", teamMemberPage);
+
+        return "team/teamMemberList";
+    }
+
+    @PostMapping("/{teamId}/removeTeamMember/{teamMemberUserId}")
+    public String PostRemoveTeamMember(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       @PathVariable("teamId") Long teamId,
+                                       @PathVariable("teamMemberUserId") Long teamMemberUserId,
+                                       RedirectAttributes redirectAttributes) {
+        Long removeTeamId = teamService.removeTeamMember(userDetails.getUser(), teamId, teamMemberUserId);
+
+        redirectAttributes.addAttribute("teamId", removeTeamId);
+
+        return "redirect:/team/{teamId}";
     }
 }

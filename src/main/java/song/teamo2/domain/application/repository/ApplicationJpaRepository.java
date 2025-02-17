@@ -1,5 +1,7 @@
 package song.teamo2.domain.application.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +23,19 @@ public interface ApplicationJpaRepository extends JpaRepository<Application, Lon
     Optional<Application> findApplicationByUserAndTeamAndStatus(@Param("user") User user,
                                                                 @Param("team") Team team,
                                                                 @Param("status")ApplicationStatus status);
+
+    @Query("select a " +
+            " from Application a " +
+            "where a.team = :team " +
+            "  and a.status = :status")
+    Page<Application> findApplicationsByTeam(@Param("team") Team team,
+                                             @Param("status") ApplicationStatus status,
+                                             Pageable pageable);
+
+    @Query("select a " +
+            " from Application a " +
+            " join fetch a.team " +
+            " join fetch a.user " +
+            "where a.id = :id ")
+    Optional<Application> findById(@Param("id") Long id);
 }

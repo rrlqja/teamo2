@@ -44,4 +44,8 @@ public class Application extends PostEntity {
         this.team = team;
         this.status = ApplicationStatus.PENDING;
     }
+
+    public void approve() {
+        this.status = ApplicationStatus.APPROVED;
+    }
 }

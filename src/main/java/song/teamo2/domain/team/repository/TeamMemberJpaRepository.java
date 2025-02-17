@@ -30,9 +30,26 @@ public interface TeamMemberJpaRepository extends JpaRepository<TeamMember, Long>
     Page<TeamMember> findTeamMembersByUser(@Param("user") User user,
                                            Pageable pageable);
 
+    @Query("select tm " +
+            " from TeamMember tm " +
+            " join fetch tm.user " +
+            " join fetch tm.team " +
+            "where tm.team = :team ")
+    Page<TeamMember> findTeamMemberByTeam(@Param("team") Team team,
+                                          Pageable pageable);
+
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete " +
             " from TeamMember tm " +
             "where tm.team = :team")
     void deleteTeamMembersByTeam(@Param("team") Team team);
+
+    @Query("select tm " +
+            " from TeamMember tm " +
+            " join fetch tm.team " +
+            " join fetch tm.user " +
+            "where tm.team = :team " +
+            "  and tm.user.id = :userId ")
+    Optional<TeamMember> findTeamMemberByTeamAndUser_Id(@Param("team") Team team,
+                                                        @Param("userId") Long userId);
 }
