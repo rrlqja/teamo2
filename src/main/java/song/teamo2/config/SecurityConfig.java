@@ -33,7 +33,10 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            String referer = request.getHeader("Referer");
+                            response.sendRedirect(referer != null ? referer : "/");
+                        })
                         .permitAll())
         ;
 
