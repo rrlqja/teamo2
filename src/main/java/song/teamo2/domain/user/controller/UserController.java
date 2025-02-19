@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import song.teamo2.domain.user.dto.LoginDto;
 import song.teamo2.domain.user.dto.SignupDto;
 import song.teamo2.domain.user.service.UserService;
 
@@ -28,5 +29,11 @@ public class UserController {
         userService.signup(signupDto);
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/login")
+    public String getLogin(@ModelAttribute("loginDto") LoginDto loginDto) {
+
+        return "user/login";
     }
 }

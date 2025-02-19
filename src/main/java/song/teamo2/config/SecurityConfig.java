@@ -30,9 +30,10 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .usernameParameter("username")
                         .passwordParameter("password")
+                        .loginPage("/user/login")
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl("/user/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
                             String referer = request.getHeader("Referer");
                             response.sendRedirect(referer != null ? referer : "/");
