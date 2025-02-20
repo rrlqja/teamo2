@@ -59,7 +59,7 @@
                 <div class="card-body" style="padding: 8px;">
                     <ul class="list-group list-group-flush">
                         <a class="list-group-item list-group-item-action" th:each="teaming, stat : ${teamingPage}" th:if="${stat.index} < 6" th:text="${teaming.title}" th:href="@{/teaming/{teamingId}(teamingId=${teaming.teamingId})}">Item 1</a>
-                        <li class="list-group-item border-0" th:each="i : ${#numbers.sequence(teamingPage.getSize()+1, 6)}">&nbsp;</li>
+                        <li class="list-group-item border-0" th:each="i : ${#numbers.sequence(teamingPage.getNumberOfElements()+1, 6)}">&nbsp;</li>
                     </ul>
                 </div>
             </div>
